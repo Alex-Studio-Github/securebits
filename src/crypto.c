@@ -91,18 +91,19 @@ int packbits(unsigned char * buffin, unsigned char * buffout, unsigned char * fi
 	
 
 	/* Salidas ******************************/
-	
 	//HEX
 	printf("@HEX out\n");
-	printf("key (%d)=\n",AES_KEY_SIZE/8);
-	hex_print(aes_key,AES_KEY_SIZE/8);
-	printf("RSA encrypted key(%d)=\n",encryptrsa_len);	
-	hex_print(encryptrsa,encryptrsa_len);
-	printf("IV (%d)=\n",AES_KEY_SIZE/8);	
-	hex_print(iv,AES_KEY_SIZE/8);
-    	
+	//printf("key (%d)=\n",AES_KEY_SIZE/8);
+	//hex_print(aes_key,AES_KEY_SIZE/8);
+	
+	//printf("RSA encrypted key(%d)=\n",encryptrsa_len);	
+	//hex_print(encryptrsa,encryptrsa_len);
+	
+	//printf("IV (%d)=\n",AES_KEY_SIZE/8);	
+	//hex_print(iv,AES_KEY_SIZE/8);
 	printf("Encrypted m(%d)=\n",len);
     	hex_print(ciphertext, len);
+
 	//BASE 64
 	if(base64==1){	
 		int b64l;	
@@ -187,15 +188,16 @@ int unpackbits(unsigned char *buffin,unsigned char *buffout, unsigned  char *fna
 			enc_out[j]=buffin[i];
 			j++;
 		}
+		// Only for debugging purpose
+		//printf("FROM FILE:\n");
+		//printf("k(%d)=\n",256);
+		//hex_print(ckey,256);
 		
-		printf("FROM FILE:\n");
-		printf("k(%d)=\n",256);
-		hex_print(ckey,256);
-		printf("iv(%d)=\n",AES_KEY_SIZE/8);
-		hex_print(iv,AES_KEY_SIZE/8);
-
-		printf("c(%d)=\n",enc_len);
-		hex_print(enc_out,enc_len);
+  		//printf("iv(%d)=\n",AES_KEY_SIZE/8);
+		//hex_print(iv,AES_KEY_SIZE/8);
+		
+		//printf("c(%d)=\n",enc_len);
+		//hex_print(enc_out,enc_len);
 	}
 	else
 		handleErrors("Option -in not yet implemented for -d");
