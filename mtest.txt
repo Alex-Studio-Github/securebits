@@ -1,0 +1,2 @@
+AES está basado en el principio de la sustituacion y permutación. Algunas de sus características son un tamaño de bloque de 128 bits y un tamaño de llave de 128, 192 o 256 bits.
+AES está basado en el principio de la sustituacion y permutación. Algunas de sus características son un tamaño de bloque de 128 bits y un tamaño de llave de 128, 192 o 256 bits.
