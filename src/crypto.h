@@ -46,9 +46,9 @@ int  addtowellknownhosts(char*,char*);
 RSA* getprivateRSAkey(void);
 RSA* getpublicRSAkey(char*);
 int 		 sizeofcipherfile(unsigned char*);
-int              readcipherfile(unsigned char**,char*);
-unsigned char *  readmsgfromfile(char*);
-int  write_ascii_tofile(unsigned char*,unsigned char*,int);
+int  readcipherfile(unsigned char**,char*);
+int  readmsgfromfile(unsigned char**,char*);
+int  writetofileb(unsigned char*,unsigned char*,int);
 int  writectofile(unsigned char*,unsigned char*,int,unsigned char*,unsigned char*,int);
 int  directoryexist(char*);
 int  createdirestructure(void);
@@ -62,5 +62,5 @@ archivo de salida.
 
 NOTA:
 */
-int packbits  (unsigned char *, unsigned char *, unsigned char *, unsigned char *,int);
+int packbits  (unsigned char *,int, unsigned char *, unsigned char *, unsigned char *,int);
 int unpackbits(unsigned char *, unsigned char *, unsigned char *, unsigned char *,int);

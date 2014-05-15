@@ -32,7 +32,7 @@ Consideraciones:
 #include "crypto.h"
 #include "base64.h"
 
-int packbits(unsigned char * buffin, unsigned char * buffout, unsigned char * fileout,unsigned char *host,int base64){
+int packbits(unsigned char * buffin,int buffin_len, unsigned char * buffout, unsigned char * fileout,unsigned char *host,int base64){
 	/*****************  KEY GEN *************************************************************/
 	int i, nrounds = KEY_ROUNDS;
   	unsigned char *aes_key  = (unsigned char*)malloc(sizeof(unsigned char) * (AES_KEY_SIZE/8));
@@ -60,7 +60,7 @@ int packbits(unsigned char * buffin, unsigned char * buffout, unsigned char * fi
   	EVP_EncryptInit_ex(&ctx, EVP_aes_256_cbc(), NULL, aes_key, iv);
     	/********************************************************************************************/
 	int len;
-	len=strlen(buffin)+1;
+	len=buffin_len+1;
         int c_len = len + AES_BLOCK_SIZE;
 	int f_len = 0;
 	unsigned char *ciphertext = (unsigned char*) malloc(c_len);
@@ -92,7 +92,7 @@ int packbits(unsigned char * buffin, unsigned char * buffout, unsigned char * fi
 
 	/* Salidas ******************************/
 	//HEX
-	printf("@HEX out\n");
+
 	//printf("key (%d)=\n",AES_KEY_SIZE/8);
 	//hex_print(aes_key,AES_KEY_SIZE/8);
 	
@@ -101,9 +101,10 @@ int packbits(unsigned char * buffin, unsigned char * buffout, unsigned char * fi
 	
 	//printf("IV (%d)=\n",AES_KEY_SIZE/8);	
 	//hex_print(iv,AES_KEY_SIZE/8);
-	printf("Encrypted m(%d)=\n",len);
-    	hex_print(ciphertext, len);
-
+	if(fileout==NULL&&base64==0){
+		printf("Encrypted m(%d)=\n",len);
+    		hex_print(ciphertext, len);
+	}
 	//BASE 64
 	if(base64==1){	
 		int b64l;	
@@ -129,10 +130,11 @@ int packbits(unsigned char * buffin, unsigned char * buffout, unsigned char * fi
 		}
 		unsigned char *output      = cod_base64(total,total_len,&b64l);
 		output[b64l]='\0';
-		printf("Base64:\n*%s*\n", output);
 		if(fileout!=NULL)
-			write_ascii_tofile(fileout,output,b64l);
-		
+			writetofileb(fileout,output,b64l);
+		else
+			printf("Base64:\n*%s*\n", output);
+				
 		free(output);
 	
 	}
@@ -162,7 +164,8 @@ int unpackbits(unsigned char *buffin,unsigned char *buffout, unsigned  char *fna
 		// El texto que hemos leido se almacena en la variable buffin
 		if(base64==1){
 			n=sizeofcipherfile(fname);
-			unsigned char *b64str=readmsgfromfile(fname);
+			unsigned char *b64str;
+			readmsgfromfile(&b64str,fname);
 			printf("Decoding from Base64(%d)...\n%s\n",n,b64str);
 			n=dec_base64(b64str, &buffin);
 			hex_print(buffin,n);
@@ -231,7 +234,7 @@ int unpackbits(unsigned char *buffin,unsigned char *buffout, unsigned  char *fna
 	printf("%s\n",plaintext);
         //FILE
         if(fileout!=NULL)
-                 write_ascii_tofile(fileout,plaintext,*len);
+                 writetofileb(fileout,plaintext,*len);
 
 	/**************************************************************************/
 	/* Clean up */
@@ -283,12 +286,12 @@ int keygen(void){
 	printf("\n%s\n%s\n", pri_key, pub_key);
 	return 1;
 }
-int write_ascii_tofile(unsigned char *fileout,unsigned char *m,int size){
+int writetofileb(unsigned char *fileout,unsigned char *m,int size){
 	FILE *file;
 	file = fopen(fileout,"w");
 	if(!file)
 		handleErrors("El archivo de salida no se ha podido crear");
-	fputs(m,file);
+	fwrite(m  , sizeof(char) , size, file);	
 	fclose(file);
 	return 1;
 }
@@ -356,10 +359,9 @@ int readcipherfile(unsigned char** buffin,char *name)
 	return fileLen;
 }
 //Leer el texto claro
-unsigned char* readmsgfromfile(char *name){
+int readmsgfromfile(unsigned char **buffin,char *name){
  	FILE *file;	
 	unsigned long fileLen;
-	unsigned char *buffin;
 	//Open file
 	file = fopen(name, "rb");
 	if (!file)
@@ -370,17 +372,16 @@ unsigned char* readmsgfromfile(char *name){
 	fseek(file, 0, SEEK_SET);
 
 	//Allocate memory
-	buffin=(char *)malloc((fileLen+1)*sizeof(unsigned char));
-	if (!buffin){
+	*buffin=( unsigned char *)malloc((fileLen+1)*sizeof(unsigned char));
+	if (!*buffin){
                	fclose(file);
 		handleErrors("Memory error!:(");
 	}
 
 	//Read file contents into buffer
-	fread(buffin, fileLen, 1, file);
+	fread(*buffin, fileLen, 1, file);
 	fclose(file);
-	return buffin;
-	
+	return fileLen;
 }
 // HEX PRINT 
 void hex_print(const void* pv, size_t len)

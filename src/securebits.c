@@ -44,6 +44,7 @@ void parseargs(int argc,char **argv){
 	unsigned char *fileout = NULL;
 	unsigned char *filein  = NULL;
 	unsigned char *iphost  = NULL;
+	int n;
  	int IN_MESG =0;	
 	int BASE_64 =0;
 	int ENCRYPT =0;
@@ -146,10 +147,12 @@ void parseargs(int argc,char **argv){
 	if(ENCRYPT==1){
 		if(IN_FILE==1)
 		{
-			buffin=readmsgfromfile(filein);
+			n=readmsgfromfile(&buffin,filein);
 			free(filein);
 		}
-		packbits(buffin,buffout,fileout,iphost,BASE_64);
+		else
+			n=strlen(buffin);
+		packbits(buffin,n,buffout,fileout,iphost,BASE_64);
 	}
 	else{
 		//La lectura del archivo se hara en unpackbits
