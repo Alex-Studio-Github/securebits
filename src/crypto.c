@@ -166,9 +166,9 @@ int unpackbits(unsigned char *buffin,unsigned char *buffout, unsigned  char *fna
 			n=sizeofcipherfile(fname);
 			unsigned char *b64str;
 			readmsgfromfile(&b64str,fname);
-			printf("Decoding from Base64(%d)...\n%s\n",n,b64str);
+			//printf("Decoding from Base64(%d)...\n%s\n",n,b64str);
 			n=dec_base64(b64str, &buffin);
-			hex_print(buffin,n);
+			//hex_print(buffin,n);
 		}
 		else
 			n=readcipherfile(&buffin,fname);
@@ -230,12 +230,14 @@ int unpackbits(unsigned char *buffin,unsigned char *buffout, unsigned  char *fna
 	/**** SALIDAS ************************************************************/
 	
     	printf("\ndecrypt(%d)=\n",*len);
-    	hex_print(plaintext, *len);
-	printf("%s\n",plaintext);
         //FILE
         if(fileout!=NULL)
                  writetofileb(fileout,plaintext,*len);
-
+		  else{
+			
+    				hex_print(plaintext, *len);
+					printf("%s\n",plaintext);
+		  }
 	/**************************************************************************/
 	/* Clean up */
 	return *len;
